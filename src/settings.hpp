@@ -56,6 +56,7 @@ struct Settings {
         bool native11_skip_identity_crop{false}; // Native D3D11: reuse a whole-image eye capture instead of copying it again.
     } fg;
     bool enabled{true};
+    bool logging{true}; // Write the CheekyFoveatedDLSS-*.log files; read when the host starts.
     bool d3d12_lower_hook{true}; // Applied at interception startup; changes require a restart.
     bool d3d11_use_d3d12_transport{false};
     bool d3d12_quad_compose_wait{true}; // D3D12 quad views: xrEndFrame waits for the composition GPU work.

@@ -598,8 +598,10 @@ extern "C" __declspec(dllexport) bool CheekyRuntime_Start(const CheekyRuntimeSta
             s.directory = input->config_directory;
             std::filesystem::create_directories(s.directory);
             s.config = s.directory / L"CheekyFoveatedDLSS.ini";
-            s.log = CreateFileW((s.directory / runtime_log_filename(s.host)).c_str(), FILE_APPEND_DATA,
-                FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+            // Logging=0 in the ini leaves the log closed (read directly: the log opens before the settings load).
+            if (GetPrivateProfileIntW(L"CheekyFoveatedDLSS", L"Logging", 1, s.config.c_str()) != 0)
+                s.log = CreateFileW((s.directory / runtime_log_filename(s.host)).c_str(), FILE_APPEND_DATA,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
             HMODULE resident{};
             if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
                 reinterpret_cast<LPCWSTR>(&CheekyRuntime_Start), &resident)) return false;

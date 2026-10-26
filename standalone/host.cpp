@@ -288,8 +288,11 @@ bool start_host(std::uint32_t host,bool vulkan) {
         const auto length=GetModuleFileNameW(module,path,32768);
         if (!length || length>=32768) return false;
         const auto directory=std::filesystem::path(path).parent_path();
-        if (host_log==INVALID_HANDLE_VALUE) host_log=CreateFileW((directory/L"CheekyFoveatedDLSS-Host.log").c_str(),FILE_APPEND_DATA,
-            FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,nullptr,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
+        // Logging=0 in CheekyFoveatedDLSS.ini leaves the host log closed.
+        if (host_log==INVALID_HANDLE_VALUE && GetPrivateProfileIntW(L"CheekyFoveatedDLSS",L"Logging",1,
+                (directory/L"CheekyFoveatedDLSS.ini").c_str())!=0)
+            host_log=CreateFileW((directory/L"CheekyFoveatedDLSS-Host.log").c_str(),FILE_APPEND_DATA,
+                FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,nullptr,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
         log_host(host==2 ? "Initializing OptiScaler host" : "Initializing standalone host");
         auto runtime=LoadLibraryExW((directory/L"CheekyFoveatedDLSSRuntime.dll").c_str(),nullptr,
             LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR|LOAD_LIBRARY_SEARCH_SYSTEM32);
