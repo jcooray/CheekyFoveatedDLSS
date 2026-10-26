@@ -17,6 +17,7 @@ Settings::FrameGeneration fg_settings;
 std::atomic<bool> processing_allowed{true};
 
 std::atomic<bool> enabled{true};
+std::atomic<bool> logging{true};
 std::atomic<bool> d3d12_lower_hook{true};
 std::atomic<bool> d3d11_use_d3d12_transport{false};
 std::atomic<bool> d3d12_quad_compose_wait{true};
@@ -164,6 +165,7 @@ Settings configured_settings() noexcept {
     Settings settings{};
     settings.fg = fg_settings;
     settings.enabled = enabled.load(std::memory_order_acquire);
+    settings.logging = logging.load(std::memory_order_acquire);
     settings.d3d12_lower_hook = d3d12_lower_hook.load(std::memory_order_acquire);
     settings.d3d11_use_d3d12_transport =
         d3d11_use_d3d12_transport.load(std::memory_order_acquire);
@@ -275,6 +277,7 @@ void update_settings(const Settings& settings) noexcept {
     fg_settings.center_method=std::min(fg_settings.center_method,2u);
     d3d12_lower_hook.store(settings.d3d12_lower_hook, std::memory_order_release);
     enabled.store(settings.enabled, std::memory_order_release);
+    logging.store(settings.logging, std::memory_order_release);
     d3d11_use_d3d12_transport.store(
         settings.d3d11_use_d3d12_transport,
         std::memory_order_release

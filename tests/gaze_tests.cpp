@@ -1650,6 +1650,10 @@ void test_auto_alignment() {
     Settings toggles; toggles.d3d12_quad_compose_wait = false;
     update_settings(toggles);
     expect(!configured_settings().d3d12_quad_compose_wait, "quad-wait toggle is stored");
+    // Logging=0 must survive it too, or the next save writes Logging=1 back.
+    toggles.logging = false;
+    update_settings(toggles);
+    expect(!configured_settings().logging, "logging off is stored");
     update_settings(Settings{});
 }
 
